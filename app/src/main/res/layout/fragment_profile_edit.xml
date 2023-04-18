@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="12dp">
+
+    <LinearLayout
+        android:id="@+id/linear_layout_user_image"
+        android:layout_width="154dp"
+        android:layout_height="154dp"
+        android:layout_marginTop="56dp"
+        android:background="@drawable/add_border_circle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_view_user_image"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginStart="2dp"
+            android:padding="10dp"
+            android:layout_marginTop="2dp"
+            app:cardBackgroundColor="#EDF0F7"
+            app:cardCornerRadius="90dp">
+
+            <ImageView
+                android:id="@+id/image_view_user_image"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_gravity="center"
+                android:src="@drawable/placeholder_user" />
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view_user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        app:cardBackgroundColor="#EDF0F7"
+        app:cardCornerRadius="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linear_layout_user_image">
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_input_layout_user_edit_name"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:startIconDrawable="@drawable/user_edit_name">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_user_edit_name"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Name..." />
+
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view_user_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        app:cardBackgroundColor="#EDF0F7"
+        app:cardCornerRadius="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_view_user_name">
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_input_layout_user_edit_email"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:startIconDrawable="@drawable/user_edit_email">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_user_edit_email"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="youremail@adress.com" />
+
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view_user_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        app:cardBackgroundColor="#EDF0F7"
+        app:cardCornerRadius="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_view_user_email">
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_input_layout_user_edit_phone"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:startIconDrawable="@drawable/user_edit_phone">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_user_edit_phone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="+40711222333" />
+
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view_user_adress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        app:cardBackgroundColor="#EDF0F7"
+        app:cardCornerRadius="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_view_user_phone">
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_input_layout_user_edit_adress"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:startIconDrawable="@drawable/user_edit_phone">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_user_edit_adress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Str. Victoriei, nr. 10, bl. 10, ap. 2, et. 2, sc. A, 601122"
+                android:maxLines="2" />
+
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+
+    <Button
+        android:id="@+id/button_user_edit_update"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/add_border_rounded"
+        android:text="Update"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_view_user_adress" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">The Yu Store</string>
+    <string name="nav_bar_home">Home</string>
+    <string name="nav_bar_wishlist">Wishlist</string>
+    <string name="nav_bar_profile">Profile</string>
+    <string name="nav_bar_cart">Cart</string>
+</resources>
