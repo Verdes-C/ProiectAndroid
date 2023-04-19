@@ -44,7 +44,7 @@ dependencies {
 //  Fragment
     implementation "androidx.fragment:fragment-ktx:1.5.6"
 //  MotionLayout
-    implementation("androidx.constraintlayout:constraintlayout:2.2.0-alpha09")
+//    implementation("androidx.constraintlayout:constraintlayout:2.2.0-alpha09")
 //  To use constraintlayout in compose
     implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha09")
 

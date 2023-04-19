@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.facultate.myapplication.R
 
@@ -30,6 +31,14 @@ class WishlistItemAdapter(private val wishlistItemsList:ArrayList<WishlistFragme
            animate(holder)
        }
 
+    }
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): WishlistItemAdapter.MyViewHolder {
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_wishlist_item,parent,false)
+        return MyViewHolder(itemView)
     }
 
     private fun animate(holder: MyViewHolder) {
@@ -60,14 +69,6 @@ class WishlistItemAdapter(private val wishlistItemsList:ArrayList<WishlistFragme
         notifyItemRemoved(currentPosition)
     }
 
-
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): WishlistItemAdapter.MyViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_wishlist_item,parent,false)
-        return MyViewHolder(itemView)
-    }
 
     class MyViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         val wishlistItemImage = itemView.findViewById<ImageView>(R.id.image_view_wishlist_item_image)
