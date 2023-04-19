@@ -14,6 +14,8 @@ import com.facultate.myapplication.databinding.FragmentWishlistBinding
 class WishlistFragment: Fragment() {
 
     private lateinit var binding: FragmentWishlistBinding
+    private lateinit var rootView: View
+
     private lateinit var recyclerViewWishlistItems:RecyclerView
     private lateinit var wishlistItems:ArrayList<WishListItem>
 
@@ -39,7 +41,11 @@ class WishlistFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        rootView = view
+    }
 
+    override fun onStart() {
+        super.onStart()
 
         wishlistItems = arrayListOf(
             WishListItem("","item1","22.45"),
@@ -52,8 +58,7 @@ class WishlistFragment: Fragment() {
             WishListItem("","item1","22.45")
         )
 
-        setWishlistItemsRecyclerView(view)
-
+        setWishlistItemsRecyclerView(rootView)
     }
 
 

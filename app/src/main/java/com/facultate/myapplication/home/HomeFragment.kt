@@ -1,6 +1,8 @@
 package com.facultate.myapplication.home
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,10 +12,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.facultate.myapplication.R
 import com.facultate.myapplication.databinding.FragmentHomeBinding
+import com.google.firebase.auth.FirebaseAuth
 
 class HomeFragment: Fragment() {
 
     private lateinit var binding:FragmentHomeBinding
+    private lateinit var rootView: View
+
 
     private lateinit var recyclerViewRecommendations: RecyclerView
     private lateinit var recyclerViewDeals: RecyclerView
@@ -34,6 +39,12 @@ class HomeFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        rootView = view
+    }
+
+    override fun onStart() {
+        super.onStart()
+
 
         recommendedProductsArrayList = arrayListOf(
             Products("","Product for testing","9.99","This is a test product. It will be changed shortly",false),
@@ -80,10 +91,9 @@ class HomeFragment: Fragment() {
             Category("Gaming"),
         )
 
-        setRecommendedProductsRecyclerView(view)
-        setDealsProductsRecyclerView(view)
-        setCategoriesRecyclerView(view)
-
+        setRecommendedProductsRecyclerView(rootView)
+        setDealsProductsRecyclerView(rootView)
+        setCategoriesRecyclerView(rootView)
     }
 
     private fun setRecommendedProductsRecyclerView(view: View) {

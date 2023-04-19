@@ -16,6 +16,7 @@ class CartFragment : Fragment(),
 {
 
     private lateinit var binding: FragmentCartBinding
+    private lateinit var rootView: View
     private lateinit var recyclerViewCartListItems: RecyclerView
     private lateinit var cartListItems: ArrayList<CartListItem>
     private lateinit var totalPrice: String
@@ -37,14 +38,18 @@ class CartFragment : Fragment(),
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentCartBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        rootView = view
+    }
 
+    override fun onStart() {
+        super.onStart()
         cartListItems = arrayListOf(
             CartListItem("", "item1", 25.55f, 2),
             CartListItem("", "item2", 25.55f, 2),
@@ -57,12 +62,9 @@ class CartFragment : Fragment(),
             CartListItem("", "item9", 25.55f, 2)
         )
 
-        setClickListeners(view)
+        setClickListeners(rootView)
         setCartTotalPrice()
-        setCartListItemsRecyclerView(view)
-
-
-
+        setCartListItemsRecyclerView(rootView)
     }
 
     private fun setClickListeners(view: View) {

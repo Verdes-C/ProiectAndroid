@@ -1,16 +1,22 @@
 package com.facultate.myapplication
 
-import androidx.appcompat.app.AppCompatActivity
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import com.facultate.myapplication.cart.CartFragment
 import com.facultate.myapplication.databinding.ActivityMainBinding
 import com.facultate.myapplication.home.HomeFragment
+import com.facultate.myapplication.login.PromptLoginActivity
 import com.facultate.myapplication.profile.EditProfileFragment
 import com.facultate.myapplication.profile.ProfileFragment
 import com.facultate.myapplication.wishlist.WishlistFragment
 import com.google.android.material.navigation.NavigationBarView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : AppCompatActivity(),
     NavigationBarView.OnItemSelectedListener,
@@ -19,16 +25,34 @@ class MainActivity : AppCompatActivity(),
     CartFragment.CartFragmentInterface,
     WishlistFragment.WishlistFragmentInterface {
 
+
+
     private lateinit var binding: ActivityMainBinding
+
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db:FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        goHome()
-        setClickListeners()
+    }
 
+    override fun onStart() {
+        super.onStart()
+
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
+        val currentUser = auth.currentUser
+        if(currentUser != null){
+            goHome()
+
+        }else{
+            val goToLoginPrompt = Intent(this,PromptLoginActivity::class.java)
+            startActivity(goToLoginPrompt)
+        }
+        setClickListeners()
     }
 
     private fun setClickListeners() {
@@ -70,6 +94,7 @@ class MainActivity : AppCompatActivity(),
                 androidx.appcompat.R.anim.abc_fade_in,
                 androidx.appcompat.R.anim.abc_fade_out
             )
+            addToBackStack(null)
             setPrimaryNavigationFragment(editProfileFragment)
             replace(R.id.frame_content, editProfileFragment)
         }
@@ -124,8 +149,20 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    override fun saveUserData() {
+    override fun saveUserData(userData: HashMap<String, Any>) {
 //        save user data
+        db.collection("Users")
+            .whereEqualTo("userID",auth.currentUser!!.uid)
+            .get()
+            .addOnSuccessListener { documents->
+                for (document in documents){
+                    val docRef = document.reference
+                    docRef.update("name",userData["name"])
+                    docRef.update("email",userData["email"])
+                    docRef.update("phone",userData["phone"])
+                    docRef.update("address",userData["address"])
+                }
+            }
         goToProfile()
     }
 
