@@ -1,34 +1,42 @@
 package com.facultate.myapplication.home
 
 import android.animation.*
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
-import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.animation.addListener
-import androidx.core.animation.doOnCancel
-import androidx.core.animation.doOnEnd
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.facultate.myapplication.R
+import com.facultate.myapplication.model.domain.Product
 
-class ProductCardAdapter(private val productsList:ArrayList<HomeFragment.Products>):RecyclerView.Adapter<ProductCardAdapter.MyViewHolder>() {
+class ProductCardAdapter(
+    private val productsList: ArrayList<Product>,
+    var isFavorite:Boolean = false
+    ):RecyclerView.Adapter<ProductCardAdapter.MyViewHolder>() {
 
     override fun getItemCount(): Int {
         return productsList.size
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val currentItem = productsList[position]
 
+        Glide.with(holder.itemView.context)
+            .load(currentItem.image)
+            .centerCrop()
+            .placeholder(R.drawable.placeholder_image)
+            .into(holder.productImage);
         holder.productImage.setImageResource(R.drawable.placeholder_image)
-        holder.productName.text = currentItem.productName
-        holder.productPrice.text = currentItem.productPrice
-        holder.productDescription.text = currentItem.productDescription
+        holder.productName.text = currentItem.title
+        holder.productPrice.text = currentItem.price.toString()
+        holder.productDescription.text = currentItem.description
 
         holder.productWishlistImage.setOnClickListener {
             animateHeartOnClick(holder, currentItem)
@@ -42,7 +50,7 @@ class ProductCardAdapter(private val productsList:ArrayList<HomeFragment.Product
 
     private fun animateHeartOnClick(
         holder: MyViewHolder,
-        currentItem: HomeFragment.Products
+        currentItem: Product
     ) {
         val animationDuration = 300.toLong()
         val growAnimation = ObjectAnimator.ofPropertyValuesHolder(
@@ -55,7 +63,7 @@ class ProductCardAdapter(private val productsList:ArrayList<HomeFragment.Product
 
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
-                    if (currentItem.productIsFavorite) {
+                    if (isFavorite) {
                         holder.productWishlistImage.setImageResource(R.drawable.wishlist)
                         holder.productWishlistImage.clearColorFilter()
                     } else {
@@ -70,7 +78,7 @@ class ProductCardAdapter(private val productsList:ArrayList<HomeFragment.Product
                         start()
                     }
 
-                    currentItem.productIsFavorite = !currentItem.productIsFavorite
+                    isFavorite = !isFavorite
                 }
             })
 

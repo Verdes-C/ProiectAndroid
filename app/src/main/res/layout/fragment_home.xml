@@ -107,12 +107,14 @@
 
 
                 <androidx.recyclerview.widget.RecyclerView
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     android:id="@+id/recycler_view_recommendations"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:scrollbars="horizontal"
                     android:overScrollMode="never"
+                    tools:itemCount="7"
                     tools:listitem="@layout/item_products" />
 
             </LinearLayout>
