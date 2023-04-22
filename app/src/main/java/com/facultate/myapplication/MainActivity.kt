@@ -17,7 +17,9 @@ import com.facultate.myapplication.wishlist.WishlistFragment
 import com.google.android.material.navigation.NavigationBarView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(),
     NavigationBarView.OnItemSelectedListener,
     ProfileFragment.ProfileFragmentInterface,
