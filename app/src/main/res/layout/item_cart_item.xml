@@ -13,14 +13,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_view_cart_item_image"
             android:layout_width="125dp"
             android:layout_height="125dp"
             android:layout_marginStart="2dp"
             android:layout_marginTop="2dp"
             android:background="@drawable/add_border_rounded"
-            android:elevation="0dp"
+            android:elevation="@dimen/cardElevation"
             app:cardBackgroundColor="#EDF0F7"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -33,7 +33,7 @@
                 android:contentDescription="The product's image"
                 android:src="@drawable/placeholder_image" />
 
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
 
         <TextView
@@ -61,7 +61,7 @@
             app:layout_constraintTop_toBottomOf="@id/text_view_cart_item_product_name">
 
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_cart_item_decrement_quantity"
                 style="@style/QuantityButton"
                 android:layout_width="30dp"
@@ -95,7 +95,7 @@
                 android:layout_height="match_parent"
                 android:background="@color/black" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_cart_item_increment_quantity"
                 style="@style/QuantityButton"
                 android:layout_width="30dp"
