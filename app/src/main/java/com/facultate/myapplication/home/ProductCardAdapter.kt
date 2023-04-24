@@ -17,7 +17,6 @@ import com.facultate.myapplication.model.domain.Product
 
 class ProductCardAdapter(
     private val productsList: ArrayList<Product>,
-    var isFavorite:Boolean = false
     ):RecyclerView.Adapter<ProductCardAdapter.MyViewHolder>() {
 
     override fun getItemCount(): Int {
@@ -33,7 +32,6 @@ class ProductCardAdapter(
             .centerCrop()
             .placeholder(R.drawable.placeholder_image)
             .into(holder.productImage);
-        holder.productImage.setImageResource(R.drawable.placeholder_image)
         holder.productName.text = currentItem.title
         holder.productPrice.text = currentItem.price.toString()
         holder.productDescription.text = currentItem.description
@@ -63,7 +61,7 @@ class ProductCardAdapter(
 
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
-                    if (isFavorite) {
+                    if (currentItem.isFavorite) {
                         holder.productWishlistImage.setImageResource(R.drawable.wishlist)
                         holder.productWishlistImage.clearColorFilter()
                     } else {
@@ -78,7 +76,7 @@ class ProductCardAdapter(
                         start()
                     }
 
-                    isFavorite = !isFavorite
+                    currentItem.isFavorite = !currentItem.isFavorite
                 }
             })
 

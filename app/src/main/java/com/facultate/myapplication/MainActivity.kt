@@ -1,7 +1,6 @@
 package com.facultate.myapplication
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -17,9 +16,6 @@ import com.google.android.material.navigation.NavigationBarView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.AndroidEntryPoint
-import retrofit2.Response
-import retrofit2.http.GET
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),

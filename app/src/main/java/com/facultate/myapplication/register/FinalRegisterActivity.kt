@@ -3,8 +3,12 @@ package com.facultate.myapplication.register
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.facultate.myapplication.MainActivity
 import com.facultate.myapplication.databinding.ActivityRegisterFinalBinding
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.delay
 
 class FinalRegisterActivity : AppCompatActivity() {
 
@@ -20,6 +24,21 @@ class FinalRegisterActivity : AppCompatActivity() {
         super.onStart()
 
         setClickListeners()
+        loadPromotionalVideo()
+    }
+
+    private fun loadPromotionalVideo() {
+        val promoVideo = binding.videoViewPromo
+        val storageRef = Firebase.storage.reference.child("videos/promo.mp4")
+
+        storageRef.downloadUrl.addOnSuccessListener { uri ->
+            promoVideo.setVideoURI(uri)
+            promoVideo.start()
+        }.addOnFailureListener { exception ->
+            // Handle any errors
+            exception.message?.let { Log.d("VIDEO", it) }
+        }
+
     }
 
     private fun setClickListeners() {

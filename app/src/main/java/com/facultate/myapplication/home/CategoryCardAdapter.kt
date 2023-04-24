@@ -6,8 +6,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.facultate.myapplication.R
+import com.facultate.myapplication.model.domain.Category
 
-class CategoryCardAdapter(private val categoriesList:ArrayList<HomeFragment.Category>):RecyclerView.Adapter<CategoryCardAdapter.MyViewHolder>() {
+class CategoryCardAdapter(private val categoriesList:ArrayList<Category>):RecyclerView.Adapter<CategoryCardAdapter.MyViewHolder>() {
 
     override fun getItemCount(): Int {
         return categoriesList.size

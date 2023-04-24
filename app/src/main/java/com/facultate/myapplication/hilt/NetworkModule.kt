@@ -1,6 +1,7 @@
 package com.facultate.myapplication.hilt
 
 import com.facultate.myapplication.MainActivity
+import com.facultate.myapplication.hilt.service.CategoriesService
 import com.facultate.myapplication.hilt.service.ProductsService
 import dagger.Module
 import dagger.Provides
@@ -41,6 +42,12 @@ object NetworkModule {
     @Singleton
     fun providesProductsService(retrofit: Retrofit): ProductsService {
         return retrofit.create(ProductsService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providesCategoriesService(retrofit: Retrofit):CategoriesService{
+        return retrofit.create(CategoriesService::class.java)
     }
 
 
