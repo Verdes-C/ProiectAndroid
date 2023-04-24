@@ -10,6 +10,7 @@ class Product(
     val id: Int,
     val image: String,
     val price: BigDecimal,
-    val title: String
+    val title: String,
+    var isFavorite:Boolean = false,
 
-)
+    )

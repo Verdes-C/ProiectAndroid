@@ -34,7 +34,7 @@ class WishlistFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentWishlistBinding.inflate(inflater,container,false)
         return binding.root
     }
