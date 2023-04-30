@@ -11,6 +11,7 @@ import com.facultate.myapplication.R
 
 class ReviewsAdapter : RecyclerView.Adapter<ReviewsAdapter.MyViewHolder>() {
 
+//    TODO real fetch and parse in real app
     private val reviewsArray = arrayListOf(
         Review(),
         Review(),
@@ -32,7 +33,6 @@ class ReviewsAdapter : RecyclerView.Adapter<ReviewsAdapter.MyViewHolder>() {
         holder.reviewTitle.text = currentItem.reviewTitle
         holder.reviewBody.text = currentItem.reviewBody
 
-        // Set reviewImage using an image loading library like Glide or Picasso
         // Glide.with(holder.itemView.context).load(currentItem.reviewImage).into(holder.reviewImage)
     }
 

@@ -18,25 +18,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-
-//        remoteMessage.notification?.let { notification->
-//            val pendingIntent = NavDeepLinkBuilder(applicationContext)
-//                .setComponentName(MainActivity::class.java)
-//                .setGraph(R.navigation.nav_graph_master)
-//                .setDestination(R.id.home_fragment)
-//                .createPendingIntent()
-//
-//            val notificationBuilder = NotificationCompat.Builder(applicationContext, getString(R.string.default_notification_channel_id))
-//                .setContentTitle(notification.title)
-//                .setContentText(notification.body)
-//                .setSmallIcon(R.drawable.cart)
-//                .setContentIntent(pendingIntent)
-//                .setAutoCancel(true)
-//
-//            val notificationManager =
-//                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//            notificationManager.notify(0, notificationBuilder.build())
-//        }
+//        Sending notifications trough Postman with a data payload
     }
 
     override fun onNewToken(token: String) {

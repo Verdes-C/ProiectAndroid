@@ -73,7 +73,7 @@ class Stage4RegisterFragment : Fragment(R.layout.fragment_register_stage_4) {
         }
 
         goToFinal.setOnClickListener {
-//
+
             usersDB
                 .whereEqualTo("userID",auth.currentUser!!.uid)
                 .get()

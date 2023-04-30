@@ -108,8 +108,6 @@ class MainActivity : AppCompatActivity() {
                 ),
                 permissionRequestCode
             )
-        } else {
-            // Permissions are already granted, proceed with app logic
         }
     }
 
@@ -121,10 +119,8 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == permissionRequestCode) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission is granted, proceed with app logic
 //                TODO
             } else {
-                // Permission is denied, show a message or take appropriate action
 //                TODO
             }
         }
