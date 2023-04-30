@@ -1,38 +1,45 @@
 package com.facultate.myapplication.cart
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.asLiveData
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.facultate.myapplication.MainActivityViewModel
 import com.facultate.myapplication.R
 import com.facultate.myapplication.databinding.FragmentCartBinding
+import com.facultate.myapplication.hilt.UsersDB
+import com.facultate.myapplication.model.domain.CartProduct
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.CollectionReference
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CartFragment : Fragment(),
-    CartListItemsAdapter.CartFragmentListener
+@AndroidEntryPoint
+class CartFragment : Fragment(), CartListItemsAdapter.CartRefresh
 {
 
+    @Inject @UsersDB lateinit var usersDB: CollectionReference
+    @Inject lateinit var auth:FirebaseAuth
+
+    private val viewModel : MainActivityViewModel by viewModels()
     private lateinit var binding: FragmentCartBinding
-    private lateinit var rootView: View
+
     private lateinit var recyclerViewCartListItems: RecyclerView
-    private lateinit var cartListItems: ArrayList<CartListItem>
-    private lateinit var totalPrice: String
 
-    private lateinit var listenerCardFragment: CartFragmentInterface
 
-    private lateinit var adapter: CartListItemsAdapter
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is CartFragmentInterface) {
-            listenerCardFragment = context
-        } else {
-            throw RuntimeException("$context must implement MyFragmentListener")
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,87 +52,96 @@ class CartFragment : Fragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        rootView = view
+
+        combine(
+            viewModel.store.stateFlow.map {
+                it.products
+            },
+            viewModel.store.stateFlow.map {
+                it.productsDeals
+            },
+            viewModel.store.stateFlow.map {
+                it.userData
+            }
+        ){  products,deals,userData->
+            products.mapNotNull { product ->
+                if(product.id.toString() in userData.cartItems.keys){
+                    return@mapNotNull CartProduct(product,product.id.toString() in userData.wishlistedProducts,product.id.toString() in deals,userData.cartItems[product.id.toString()].toString().toInt())
+                }else{
+                    return@mapNotNull null
+                }
+            }
+        }.asLiveData().observe(viewLifecycleOwner){cartProducts->
+            setCartListItemsRecyclerView(cartProducts as ArrayList<CartProduct>,view)
+            refreshCartTotal(cartProducts)
+        }
+
+        setClickListeners()
     }
 
     override fun onStart() {
         super.onStart()
-        cartListItems = arrayListOf(
-            CartListItem("", "item1", 25.55f, 2),
-            CartListItem("", "item2", 25.55f, 2),
-            CartListItem("", "item3", 25.55f, 2),
-            CartListItem("", "item4", 25.55f, 2),
-            CartListItem("", "item5", 25.55f, 2),
-            CartListItem("", "item6", 25.55f, 2),
-            CartListItem("", "item7", 25.55f, 2),
-            CartListItem("", "item8", 25.55f, 2),
-            CartListItem("", "item9", 25.55f, 2)
-        )
-
-        setClickListeners(rootView)
-        setCartTotalPrice()
-        setCartListItemsRecyclerView(rootView)
     }
 
-    private fun setClickListeners(view: View) {
+    private fun setClickListeners() {
         binding.buttonCartClear.setOnClickListener {
-            cartListItems = arrayListOf()
-            setCartTotalPrice()
-            setCartListItemsRecyclerView(view)
+            clearCart()
+            setCartTotalPrice(arrayListOf())
         }
     }
 
-    private fun setCartTotalPrice() {
-        if (cartListItems.size > 0) {
-            totalPrice = calculateTotalPrice(cartListItems)
-            binding.textViewCartTotal.text = "Total: $totalPrice€"
+    private fun setCartTotalPrice(cartProducts: ArrayList<CartProduct>) {
+        if (cartProducts.size > 0) {
+            val totalPrice = calculateTotalPrice(cartProducts)
+            binding.textViewCartTotal.text = "Total: $ $totalPrice"
         } else {
-            binding.textViewCartTotal.text = "Total: 0€"
+            binding.textViewCartTotal.text = "Total: $ 0"
         }
     }
 
-    private fun calculateTotalPrice(products: ArrayList<CartFragment.CartListItem>): String {
+    private fun calculateTotalPrice(products: ArrayList<CartProduct>): String {
         var totalPrice = 0.00
         for (product in products) {
-            totalPrice += product.productPrice * product.productQuantity
+            totalPrice += product.product.price * product.quantity
         }
         return String.format("%.2f", totalPrice)
     }
 
-    private fun setCartListItemsRecyclerView(view: View) {
+    private fun setCartListItemsRecyclerView(cartProducts: ArrayList<CartProduct>, view: View) {
         val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         recyclerViewCartListItems = view.findViewById(R.id.recycler_view_cart_items)
         recyclerViewCartListItems.layoutManager = layoutManager
-        adapter = CartListItemsAdapter(cartListItems, requireView(), this)
+        val adapter = CartListItemsAdapter(cartProducts,viewModel.store,this,findNavController())
         recyclerViewCartListItems.adapter = adapter
 
     }
 
-    override fun sendTrigger(trigger: Boolean) {
-        binding.buttonCartBuyItems.isEnabled = trigger
-        binding.buttonCartClear.isEnabled = trigger
+    override fun refreshCartTotal(cartProducts: ArrayList<CartProduct>) {
+        setCartTotalPrice(cartProducts)
     }
 
-    override fun onItemRemoved(position: Int) {
-        adapter.removeItem(position)
+    override fun clearCart() {
+        view?.let { setCartListItemsRecyclerView(arrayListOf(), it) }
+        CoroutineScope(Dispatchers.Main).launch {
+            viewModel.store.update { applicationState ->
+                val userDataCopy = applicationState.userData
+                userDataCopy.cartItems = hashMapOf()
+
+                usersDB.whereEqualTo("userID",auth.currentUser!!.uid)
+                    .get()
+                    .addOnSuccessListener { results->
+                        results.documents[0].reference.update("cartItems", hashMapOf<String,Int>())
+                    }
+
+                return@update applicationState.copy(
+                    userData = userDataCopy
+                )
+            }
+            coroutineContext.cancel()
+        }
     }
 
-
-    class CartListItem(
-        var productImage: String,
-        var productName: String,
-        var productPrice: Float,
-        var productQuantity: Int,
-        var isRemoving:Boolean = false
-    )
-
-    fun handleBackPressed() {
-        listenerCardFragment.goHome()
+    override fun buy() {
+//        TODO IMPLEMENT NEW ACTIVITY
     }
-
-
-    interface CartFragmentInterface {
-        fun goHome()
-    }
-
 }

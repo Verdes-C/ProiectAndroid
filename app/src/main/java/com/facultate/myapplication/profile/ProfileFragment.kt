@@ -1,6 +1,5 @@
 package com.facultate.myapplication.profile
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -9,34 +8,41 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.facultate.myapplication.MainActivity
+import com.facultate.myapplication.MainActivityViewModel
+import com.facultate.myapplication.NavGraphMasterDirections
+import com.facultate.myapplication.R
 import com.facultate.myapplication.databinding.FragmentProfileBinding
-import com.google.android.gms.tasks.OnCompleteListener
+import com.facultate.myapplication.hilt.FirebaseModule
+import com.facultate.myapplication.hilt.UsersDB
+import com.facultate.myapplication.login.PromptLoginFragment
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.storage.StorageReference
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ProfileFragment : Fragment() {
 
+    private val viewModel: MainActivityViewModel by viewModels()
     private lateinit var binding: FragmentProfileBinding
-    private lateinit var listener: ProfileFragmentInterface
 
-    private lateinit var auth: FirebaseAuth
-    private lateinit var db: FirebaseFirestore
+    @Inject
+    lateinit var auth: FirebaseAuth
 
-    private lateinit var userData:Map<String,Any>
+    @Inject
+    @UsersDB
+    lateinit var usersDB: CollectionReference
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is ProfileFragmentInterface) {
-            listener = context
-        } else {
-            throw RuntimeException("$context must implement MyFragmentListener")
-        }
-    }
+    @Inject
+    lateinit var imageStorage: StorageReference
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,71 +55,68 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setClickListeners(view)
+        updateUiWithUserData(view)
     }
 
     override fun onStart() {
         super.onStart()
-
-        auth = FirebaseAuth.getInstance()
-        db = Firebase.firestore
-
-        setClickListeners()
-        readUserData()
-
     }
 
-    private fun updateUiWithUserData() {
+    private fun updateUiWithUserData(view: View) {
         val userImage = binding.imageViewUserImage
         val userName = binding.textViewUserName
 
-        val storageRef = Firebase.storage.reference.child("userProfileImages/${auth.currentUser!!.uid}.jpg")
-        storageRef.getBytes(1024 * 1024)
+        imageStorage
+            .child("userProfileImages/${FirebaseModule.providesAuth().currentUser!!.uid}.jpg")
+            .getBytes(1024 * 1024)
             .addOnSuccessListener { bytes ->
                 val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
                 userImage.setImageBitmap(bitmap)
             }
             .addOnFailureListener { exception ->
-                Log.e("TAG", "Error downloading image", exception)
-            }
-
-        userName.text = userData["name"].toString()
-    }
-
-    private fun readUserData() {
-        db.collection("Users")
-            .whereEqualTo("userID",auth.currentUser!!.uid)
-            .get()
-            .addOnSuccessListener { documents->
-                for (document in documents){
-                    userData = document.data
+                if (exception.message == "Object does not exist at location.") {
+                    usersDB.whereEqualTo("userID", FirebaseModule.providesAuth().currentUser!!.uid)
+                        .get()
+                        .addOnSuccessListener { results ->
+                            val documentRef = results.documents[0]
+                            val profileImageURL = documentRef.data?.get("profileImageURL")
+                            Glide.with(view.context)
+                                .load(profileImageURL)
+                                .centerCrop()
+                                .placeholder(R.drawable.placeholder_image)
+                                .into(userImage)
+                        }
+                        .addOnFailureListener { exception ->
+//                            TODO ??? Maybe some error handling?
+                        }
+                } else {
+//                    TODO ???
+                    Log.e("ProfileImageDownload", "Error downloading image", exception)
                 }
-                updateUiWithUserData()
             }
+        viewModel.viewModelScope.launch {
+            viewModel.store.read { applicationState ->
+                userName.text = applicationState.userData.name
+            }
+        }
     }
 
-    private fun setClickListeners() {
+    private fun setClickListeners(view: View) {
 
         binding.imageViewUserEdit.setOnClickListener {
-            listener.goToEditProfileFragment()
+            val actionToEditProfile =
+                ProfileFragmentDirections.actionProfileFragmentToEditProfileFragment()
+            view.findNavController().navigate(actionToEditProfile)
         }
 
         binding.buttonUserLogout.setOnClickListener {
             auth.signOut()
-            goToMainActivity()
+//            TODO MODIFY TO BE A FRAGMENT
+            val actionToLoginPrompt = NavGraphMasterDirections.actionGlobalToNavMaster()
+            findNavController().navigate(actionToLoginPrompt)
+
         }
-    }
-
-    private fun goToMainActivity() {
-        val goToMainActivity = Intent(context,MainActivity::class.java)
-        startActivity(goToMainActivity)
-    }
-
-    fun handleBackPressed() {
-        listener.goHome()
-    }
-
-    interface ProfileFragmentInterface{
-        fun goToEditProfileFragment()
-        fun goHome()
     }
 }

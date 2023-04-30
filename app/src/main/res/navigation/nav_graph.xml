@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/home_fragment">
+
+    <action
+        app:destination="@id/master_start"
+        android:id="@+id/action_nav_graph_to_master_graph"/>
+
+    <action
+        app:destination="@id/cart_fragment"
+        android:id="@+id/action_nav_graph_to_cart"/>
+
+    <fragment
+        android:id="@+id/home_fragment"
+        android:name="com.facultate.myapplication.home.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_home_fragment_to_wishlist_fragment"
+            app:destination="@id/wishlist_fragment" />
+        <action
+            android:id="@+id/action_home_fragment_to_profile_fragment"
+            app:destination="@id/profile_fragment" />
+        <action
+            android:id="@+id/action_home_fragment_to_cart_fragment"
+            app:destination="@id/cart_fragment" />
+        <action
+            android:id="@+id/action_home_fragment_to_product_fragment"
+            app:destination="@id/product_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/wishlist_fragment"
+        android:name="com.facultate.myapplication.wishlist.WishlistFragment"
+        android:label="Wishlist"
+        tools:layout="@layout/fragment_wishlist" >
+        <action
+            android:id="@+id/action_wishlist_fragment_to_product_fragment"
+            app:destination="@id/product_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/profile_fragment"
+        android:name="com.facultate.myapplication.profile.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profile_fragment_to_edit_profile_fragment"
+            app:destination="@id/edit_profile_fragment" />
+        <action
+            android:id="@+id/action_profile_fragment_to_home_fragment"
+            app:destination="@id/home_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/edit_profile_fragment"
+        android:name="com.facultate.myapplication.profile.EditProfileFragment"
+        android:label="Edit Profile"
+        tools:layout="@layout/fragment_profile_edit" >
+        <action
+            android:id="@+id/action_edit_profile_fragment_to_profile_fragment"
+            app:destination="@id/profile_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/cart_fragment"
+        android:name="com.facultate.myapplication.cart.CartFragment"
+        android:label="Cart"
+        tools:layout="@layout/fragment_cart" >
+        <action
+            android:id="@+id/action_cart_fragment_to_product_fragment"
+            app:destination="@id/product_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/product_fragment"
+        android:name="com.facultate.myapplication.product.ProductFragment"
+        android:label="Cart"
+        tools:layout="@layout/fragment_product">
+        <argument
+            android:name="product_data"
+            app:argType="com.facultate.myapplication.model.domain.UIProduct"
+            />
+    </fragment>
+
+</navigation>

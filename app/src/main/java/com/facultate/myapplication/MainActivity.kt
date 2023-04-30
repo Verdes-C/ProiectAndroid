@@ -1,38 +1,49 @@
 package com.facultate.myapplication
 
+import android.Manifest
+import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.os.Bundle
-import android.view.MenuItem
+import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.commit
-import com.facultate.myapplication.cart.CartFragment
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
 import com.facultate.myapplication.databinding.ActivityMainBinding
-import com.facultate.myapplication.home.HomeFragment
-import com.facultate.myapplication.login.PromptLoginActivity
-import com.facultate.myapplication.profile.EditProfileFragment
-import com.facultate.myapplication.profile.ProfileFragment
-import com.facultate.myapplication.wishlist.WishlistFragment
-import com.google.android.material.navigation.NavigationBarView
+import com.facultate.myapplication.hilt.UsersDB
+import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.CollectionReference
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(),
-    NavigationBarView.OnItemSelectedListener,
-    ProfileFragment.ProfileFragmentInterface,
-    EditProfileFragment.ProfileEditFragmentInterface,
-    CartFragment.CartFragmentInterface,
-    WishlistFragment.WishlistFragmentInterface {
+class MainActivity : AppCompatActivity() {
 
 
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var auth: FirebaseAuth
-    private lateinit var db:FirebaseFirestore
+    @Inject
+    lateinit var auth: FirebaseAuth
+
+    @Inject
+    @UsersDB
+    lateinit var usersDB: CollectionReference
+    private lateinit var navController: NavController
+
+    private val permissionRequestCode = 1002
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -41,146 +52,84 @@ class MainActivity : AppCompatActivity(),
     override fun onStart() {
         super.onStart()
 
-        auth = FirebaseAuth.getInstance()
-        db = FirebaseFirestore.getInstance()
-        val currentUser = auth.currentUser
-        if(currentUser != null){
-            goHome()
+        askForPermissions()
 
-        }else{
-            val goToLoginPrompt = Intent(this,PromptLoginActivity::class.java)
-            startActivity(goToLoginPrompt)
-        }
-        setClickListeners()
-    }
-
-    private fun setClickListeners() {
-        binding.bottomNav.setOnItemSelectedListener(this)
-    }
-
-    override fun onNavigationItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.bottom_nav_button_home -> onHomeClicked()
-        R.id.bottom_nav_button_wishlist -> onWishlistClicked()
-        R.id.bottom_nav_button_profile -> onProfileClicked()
-        R.id.bottom_nav_button_cart -> onCartClicked()
-        else -> false
-    }
-
-    private fun onHomeClicked(): Boolean {
-        goHome()
-        return true
-    }
-
-    private fun onWishlistClicked(): Boolean {
-        goToWishlist()
-        return true
-    }
-
-    private fun onProfileClicked(): Boolean {
-        goToProfile()
-        return true
-    }
-
-    private fun onCartClicked(): Boolean {
-        goToCart()
-        return true
-    }
-
-    override fun goToEditProfileFragment() {
-        val editProfileFragment = EditProfileFragment()
-        supportFragmentManager.commit {
-            setCustomAnimations(
-                androidx.appcompat.R.anim.abc_fade_in,
-                androidx.appcompat.R.anim.abc_fade_out
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.frame_content) as NavHostFragment
+        navController = Navigation.findNavController(this, R.id.frame_content)
+        navHostFragment.navController.graph = navController.graph
+        NavigationUI.setupWithNavController(binding.bottomNav, navController)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            val destinationIdToHide = arrayListOf<Int>(
+                R.id.master_start,
+                R.id.sign_up_stage1_fragment,
+                R.id.sign_up_stage2_fragment,
+                R.id.sign_up_stage3_fragment,
+                R.id.sign_up_stage4_fragment,
+                R.id.sign_up_stage_final,
+                R.id.login_fragment
             )
-            addToBackStack(null)
-            setPrimaryNavigationFragment(editProfileFragment)
-            replace(R.id.frame_content, editProfileFragment)
-        }
-    }
-
-    override fun goHome() {
-        val homeFragment = HomeFragment()
-        supportFragmentManager.commit {
-            setCustomAnimations(
-                androidx.appcompat.R.anim.abc_fade_in,
-                androidx.appcompat.R.anim.abc_fade_out
-            )
-            setPrimaryNavigationFragment(homeFragment)
-            replace(R.id.frame_content, homeFragment)
-        }
-        binding.bottomNav.menu.findItem(R.id.bottom_nav_button_home)?.isChecked = true
-    }
-
-    private fun goToWishlist() {
-        val wishList = WishlistFragment()
-        supportFragmentManager.commit {
-            setCustomAnimations(
-                androidx.appcompat.R.anim.abc_fade_in,
-                androidx.appcompat.R.anim.abc_fade_out
-            )
-            setPrimaryNavigationFragment(wishList)
-            replace(R.id.frame_content, wishList)
-        }
-    }
-
-    private fun goToProfile() {
-        val profileFragment = ProfileFragment()
-        supportFragmentManager.commit {
-            setCustomAnimations(
-                androidx.appcompat.R.anim.abc_fade_in,
-                androidx.appcompat.R.anim.abc_fade_out
-            )
-            setPrimaryNavigationFragment(profileFragment)
-            replace(R.id.frame_content, profileFragment)
-        }
-    }
-
-    private fun goToCart() {
-        val cartFragment = CartFragment()
-        supportFragmentManager.commit {
-            setCustomAnimations(
-                androidx.appcompat.R.anim.abc_fade_in,
-                androidx.appcompat.R.anim.abc_fade_out
-            )
-            setPrimaryNavigationFragment(cartFragment)
-            replace(R.id.frame_content, cartFragment)
-        }
-    }
-
-    override fun saveUserData(userData: HashMap<String, Any>) {
-//        save user data
-        db.collection("Users")
-            .whereEqualTo("userID",auth.currentUser!!.uid)
-            .get()
-            .addOnSuccessListener { documents->
-                for (document in documents){
-                    val docRef = document.reference
-                    docRef.update("name",userData["name"])
-                    docRef.update("email",userData["email"])
-                    docRef.update("phone",userData["phone"])
-                    docRef.update("address",userData["address"])
-                }
+            if (destination.id in destinationIdToHide) {
+                binding.bottomNav.visibility = View.GONE
+            } else {
+                binding.bottomNav.visibility = View.VISIBLE
             }
-        goToProfile()
+        }
+        if (auth.currentUser != null) {
+            val destination = intent.extras?.get("destination")
+            if(destination == "cart"){
+                val goToNavGraph = NavGraphMasterDirections.actionGlobalToNavGraph()
+                navController.navigate(goToNavGraph)
+                val goToCart = NavGraphDirections.actionNavGraphToCart()
+                navController.navigate(goToCart)
+            }else{
+                val goToHome = NavGraphMasterDirections.actionGlobalToCart()
+                navController.navigate(goToHome)
+            }
+        } else {
+            val goToLoginPrompt = NavGraphMasterDirections.actionGlobalToNavMaster()
+            navController.navigate(goToLoginPrompt)
+        }
+
+
     }
 
-    override fun onBackPressed() {
-        val fragment = supportFragmentManager.findFragmentById(R.id.frame_content)
-        if (fragment is WishlistFragment) {
-            fragment.handleBackPressed()
-        } else if (fragment is ProfileFragment) {
-            fragment.handleBackPressed()
-        } else if (fragment is EditProfileFragment) {
-            fragment.handleBackPressed()
-        } else if (fragment is CartFragment) {
-            fragment.handleBackPressed()
+    private fun askForPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED
+            || ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ),
+                permissionRequestCode
+            )
         } else {
-            super.onBackPressed()
+            // Permissions are already granted, proceed with app logic
         }
     }
 
-
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == permissionRequestCode) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted, proceed with app logic
+//                TODO
+            } else {
+                // Permission is denied, show a message or take appropriate action
+//                TODO
+            }
+        }
+    }
 
 }
+
 
