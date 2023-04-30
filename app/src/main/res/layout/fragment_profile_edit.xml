@@ -133,7 +133,7 @@
                 android:id="@+id/edit_text_user_edit_phone"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="+40711222333" />
+                android:hint="Phone number" />
 
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -167,7 +167,7 @@
                 android:id="@+id/edit_text_user_edit_adress"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="Str. Victoriei, nr. 10, bl. 10, ap. 2, et. 2, sc. A, 601122"
+                android:hint="Adress"
                 android:maxLines="2" />
 
 

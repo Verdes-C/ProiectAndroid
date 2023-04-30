@@ -2,10 +2,10 @@
 
 <androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/motion_layout_wishlist"
     android:layout_width="match_parent"
     android:layout_height="177dp"
     android:padding="24dp"
-    android:id="@+id/motion_layout_wishlist"
     app:layoutDescription="@xml/item_wishlist_item_scene"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent">
@@ -53,12 +53,13 @@
 
         <TextView
             android:id="@+id/text_view_wishlist_item_product_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_marginStart="8dp"
             android:fontFamily="sans-serif-black"
+            android:gravity="center"
             android:padding="8sp"
-            android:text="Product Name"
+            android:text=""
             android:textColor="@color/black"
             android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@id/image_view_wishlist_item_price"
@@ -78,13 +79,29 @@
 
         <TextView
             android:id="@+id/image_view_wishlist_item_price"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            app:layout_constraintHorizontal_weight="1"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-black"
             android:text="$25.99"
+            android:gravity="center"
             android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/buttonAddItemToCart"
             app:layout_constraintLeft_toRightOf="@id/card_view_item"
+            app:layout_constraintRight_toLeftOf="@id/buttonAddItemToCart"
+            app:layout_constraintTop_toBottomOf="@id/text_view_wishlist_item_product_name" />
+
+        <Button
+            android:id="@+id/buttonAddItemToCart"
+            style="@style/PrimaryButton"
+            android:layout_width="0dp"
+            android:padding="0dp"
+            app:layout_constraintHorizontal_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Add to Cart"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/image_view_wishlist_item_price"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_view_wishlist_item_product_name" />
 

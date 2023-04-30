@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_master"
+    app:startDestination="@id/master_start">
+
+    <action
+        android:id="@+id/action_global_to_nav_graph"
+        app:destination="@id/nav_graph"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim"
+        app:popUpTo="@id/home_fragment"
+        app:popUpToInclusive="true" />
+
+    <action
+        android:id="@+id/action_global_to_nav_master"
+        app:destination="@id/nav_graph_master"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim"
+        app:popUpTo="@id/master_start"
+        app:popUpToInclusive="true" />
+
+    <action
+        android:id="@+id/action_global_to_cart"
+        app:destination="@id/nav_graph"
+        app:popUpTo="@id/cart_fragment"
+        app:popUpToInclusive="true" />
+
+    <include
+        android:id="@+id/nav_graph"
+        app:graph="@navigation/nav_graph" />
+
+    <include
+        android:id="@+id/nav_graph_authentication"
+        app:graph="@navigation/nav_graph_authentication" />
+
+    <fragment
+        android:id="@+id/login_fragment"
+        android:name="com.facultate.myapplication.login.LoginFragment"
+        android:label="Sign In"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_login_fragment_to_nav_graph"
+            app:destination="@id/nav_graph" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/master_start"
+        android:name="com.facultate.myapplication.login.PromptLoginFragment"
+        android:label="MasterStart"
+        tools:layout="@layout/fragment_login_prompt">
+        <action
+            android:id="@+id/action_prompt_login_to_stage1"
+            app:destination="@id/nav_graph_authentication" />
+        <action
+            android:id="@+id/action_master_start_to_login_fragment"
+            app:destination="@id/login_fragment" />
+        <argument
+            android:name="destination"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
+</navigation>

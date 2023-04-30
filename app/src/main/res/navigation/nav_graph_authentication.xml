@@ -1,0 +1,59 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_authentication"
+    app:startDestination="@id/sign_up_stage1_fragment">
+
+    <action
+        android:id="@+id/action_authentication_to_nav_graph"
+        app:destination="@id/nav_graph"/>
+
+    <fragment
+        android:id="@+id/sign_up_stage1_fragment"
+        android:name="com.facultate.myapplication.register.Stage1RegisterFragment"
+        android:label="Sign Up 1/4"
+        tools:layout="@layout/fragment_register_stage_1">
+        <action
+            android:id="@+id/action_sign_up_stage1_fragment_to_sign_up_stage2_fragment"
+            app:destination="@id/sign_up_stage2_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/sign_up_stage2_fragment"
+        android:name="com.facultate.myapplication.register.Stage2RegisterFragment"
+        android:label="Sign Up 2/4"
+        tools:layout="@layout/fragment_register_stage_2">
+        <action
+            android:id="@+id/action_sign_up_stage2_fragment_to_sign_up_stage3_fragment"
+            app:destination="@id/sign_up_stage3_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/sign_up_stage3_fragment"
+        android:name="com.facultate.myapplication.register.Stage3RegisterFragment"
+        android:label="Sign Up 3/4"
+        tools:layout="@layout/fragment_register_stage_3">
+        <action
+            android:id="@+id/action_sign_up_stage3_fragment_to_sign_up_stage4_fragment"
+            app:destination="@id/sign_up_stage4_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/sign_up_stage4_fragment"
+        android:name="com.facultate.myapplication.register.Stage4RegisterFragment"
+        android:label="Sign Up 4/4"
+        tools:layout="@layout/fragment_register_stage_4">
+        <action
+            android:id="@+id/action_sign_up_stage4_fragment_to_sign_up_stage_final"
+            app:destination="@id/sign_up_stage_final" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/sign_up_stage_final"
+        android:name="com.facultate.myapplication.register.FinalRegisterFragment"
+        android:label="Enjoy your shopping!"
+        tools:layout="@layout/fragment_register_final">
+    </fragment>
+
+
+</navigation>

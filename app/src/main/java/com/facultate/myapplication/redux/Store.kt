@@ -1,11 +1,13 @@
 package com.facultate.myapplication.redux
 
+import android.util.Log
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import javax.inject.Inject
 
-class Store<T>(initialState:T) {
+class Store<T> (initialState:T) {
 
     private val _stateFlow = MutableStateFlow(initialState)
     val stateFlow: StateFlow<T> = _stateFlow

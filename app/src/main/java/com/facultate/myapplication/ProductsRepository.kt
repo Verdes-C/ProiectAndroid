@@ -13,6 +13,6 @@ class ProductsRepository @Inject constructor(
     suspend fun fetchAllProducts(): List<Product> {
         return productsService.getAllProducts().body()?.let { networkProducts ->
             networkProducts.map { productMapper.buildFrom(it) }
-        } ?: emptyList()
+        } ?: arrayListOf<Product>()
     }
 }
