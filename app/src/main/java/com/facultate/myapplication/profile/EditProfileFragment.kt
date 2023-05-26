@@ -155,7 +155,7 @@ class EditProfileFragment : Fragment() {
         }
 //        Save userImage
         val image = binding.imageViewUserImage.drawable
-        var imageBitmap:Bitmap
+        val imageBitmap:Bitmap
         val baos = ByteArrayOutputStream()
         if (image is BitmapDrawable) {
             imageBitmap = (image as BitmapDrawable).bitmap

@@ -46,7 +46,6 @@ class MainActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(this)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
     }
 
     override fun onStart() {
@@ -57,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.frame_content) as NavHostFragment
         navController = Navigation.findNavController(this, R.id.frame_content)
-        navHostFragment.navController.graph = navController.graph
+//        navHostFragment.navController.graph = navController.graph
         NavigationUI.setupWithNavController(binding.bottomNav, navController)
         navController.addOnDestinationChangedListener { _, destination, _ ->
             val destinationIdToHide = arrayListOf<Int>(
@@ -124,6 +123,12 @@ class MainActivity : AppCompatActivity() {
 //                TODO
             }
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        navController.previousBackStackEntry?.savedStateHandle?.set("image", data)
+        navController.navigateUp()
     }
 
 }

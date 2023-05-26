@@ -35,6 +35,15 @@ class Stage2RegisterFragment : Fragment(R.layout.fragment_register_stage_2) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentRegisterStage2Binding.bind(view)
+
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Intent>("image")?.observe(
+            viewLifecycleOwner) { result ->
+            // Do something with the result.
+            val bitmap = result.extras?.get("data") as Bitmap
+            attachImage(bitmap)
+            findNavController().currentBackStackEntry?.savedStateHandle?.remove<Intent>("image")
+        }
+
     }
 
     override fun onStart() {

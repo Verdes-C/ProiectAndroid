@@ -71,7 +71,6 @@
             android:id="@+id/image_view_wishlist_item_wishlited"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_margin="12dp"
             android:padding="4dp"
             android:src="@drawable/wishlist"
             app:layout_constraintRight_toRightOf="parent"

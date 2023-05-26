@@ -102,6 +102,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     override fun onStart() {
         super.onStart()
+        lifecycleScope.launch {
+            viewModel.store.stateFlow.map { it.userData }.distinctUntilChanged().asLiveData().observe(viewLifecycleOwner){userData->
+                val greeting = "Hello, ${userData.name}"
+                binding.textViewHomeGreeting.text = greeting
+            }
+        }
     }
 
 //    Functions to set the recycler views accordingly
